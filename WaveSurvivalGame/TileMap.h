@@ -12,4 +12,7 @@ private:
 public:
 
     bool load(const std::string& tileset, sf::Vector2u tileSize, const int* tiles, unsigned int width, unsigned int height);
+    sf::FloatRect getBounds() const {
+        return m_vertices.getBounds();
+    }
 };

@@ -71,5 +71,4 @@ void Weapon::Initialize()
 
 void Weapon::Update(float deltaTime)
 {
-
 }

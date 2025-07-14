@@ -22,9 +22,9 @@ bool TileMap::load(const std::string& tileset, sf::Vector2u tileSize, const int*
     m_vertices.resize(width * height * 6);
 
 
-    for (unsigned int i = 0; i < width; ++i)
+    for (unsigned int j = 0; j < height; ++j)
     {
-        for (unsigned int j = 0; j < height; ++j)
+        for (unsigned int i = 0; i < width; ++i)
         {
 
             int tileNumber = tiles[i + j * width];

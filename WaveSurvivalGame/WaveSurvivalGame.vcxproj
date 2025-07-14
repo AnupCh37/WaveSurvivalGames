@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="FrameRate.h" />
+    <ClInclude Include="loader.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Pause.h" />
     <ClInclude Include="Player.h" />

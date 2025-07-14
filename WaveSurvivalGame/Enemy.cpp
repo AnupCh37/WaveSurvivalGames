@@ -46,7 +46,7 @@ void Enemy::Update(float deltaTime, const sf::Vector2f& playerPos)
 
 void Enemy::Load()
 {
-    if (font.loadFromFile("C:/Users/anup3/OneDrive/Desktop/rpg game/assets/Fonts/arial.ttf")) {
+    if (font.loadFromFile("Assets/Fonts/arial.ttf")) {
         std::cout << "Arial.ttf font loaded successfully." << std::endl;
         healthtext.setFont(font);
         healthtext.setString(std::to_string(health));
@@ -55,7 +55,7 @@ void Enemy::Load()
         std::cout << "Failed to load Arial.ttf font." << std::endl;
     }
 
-    if (texture.loadFromFile("C:/Users/anup3/OneDrive/Desktop/rpg game/assets/Player/Texture/spritesheet.png")) {
+    if (texture.loadFromFile("Assets/Player/Texture/spritesheet.png")) {
         std::cout << "Enemy image loaded." << std::endl;
 
         sprite.setPosition(sf::Vector2f(1000.f, 730.f));

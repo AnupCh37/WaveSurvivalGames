@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "Player.h"
 #include "Enemy.h"
 #include "FrameRate.h"
@@ -15,58 +17,9 @@ int main()
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
 
-    sf::RenderWindow window(sf::VideoMode(1216, 800), "RPG game", sf::Style::Default, settings);
+    sf::RenderWindow window(sf::VideoMode(800, 600), "RPG game", sf::Style::Default, settings);
     window.setFramerateLimit(60);
 
-    // Load a font (make sure you have a font file in your Assets folder)
-    sf::Font font;
-    if (!font.loadFromFile("Assets/arial.ttf")) {
-        std::cout << "Failed to load font for pause button\n";
-    }
-
-    // Create the pause button rectangle
-    sf::Vector2f buttonSize(100, 40);
-    sf::RectangleShape pauseButton(buttonSize);
-    pauseButton.setFillColor(sf::Color(80, 80, 80));
-    pauseButton.setOutlineColor(sf::Color::White);
-    pauseButton.setOutlineThickness(2);
-    pauseButton.setPosition(window.getSize().x - buttonSize.x - 10, 10);
-
-    // Create the pause button text
-    sf::Text pauseText("Pause", font, 22);
-    pauseText.setFillColor(sf::Color::White);
-    pauseText.setPosition(
-        pauseButton.getPosition().x + 20,
-        pauseButton.getPosition().y + 5
-    );
-
-    constexpr std::array level = {
-         0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,2,0,0,0,0,0,0,
-    0,0,0,2,0,0,0,1,1,1,1,1,0,0,0,0,0,2,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,2,0,0,0,
-    0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,3,3,
-    0,2,0,0,0,0,3,0,0,0,0,2,0,0,0,0,3,0,0,0,0,0,0,0,0,3,0,0,0,0,0,2,0,0,0,3,0,0,
-    0,0,0,0,3,3,3,0,0,0,0,0,0,0,3,3,3,0,0,0,0,0,0,0,0,3,3,3,0,0,0,0,3,3,3,0,0,0,
-    0,1,0,0,0,0,3,0,0,0,0,1,0,0,0,0,3,0,0,0,0,0,2,0,0,3,0,0,0,1,0,0,0,0,3,0,0,2,
-    0,1,1,1,1,0,3,0,0,0,0,1,1,1,1,0,3,0,0,0,0,1,1,1,1,3,0,0,0,1,1,1,1,0,3,0,0,0,
-    0,0,0,0,0,0,3,2,0,0,0,0,0,0,0,0,3,2,0,0,0,0,0,0,0,3,2,0,0,0,0,0,0,0,3,2,0,0,
-    0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,3,0,0,0,
-    2,0,0,0,0,0,3,3,3,3,0,0,0,0,0,0,3,3,3,3,0,0,0,0,0,3,3,3,3,0,0,0,0,0,3,3,3,3,
-    0,0,0,2,0,0,3,0,0,3,0,0,0,2,0,0,3,0,0,3,0,0,0,0,2,3,0,0,3,0,0,0,2,0,3,0,0,3,
-    0,0,0,0,0,0,3,0,0,3,0,0,0,0,0,0,3,0,0,3,0,0,0,0,0,3,0,0,3,0,0,0,0,0,3,0,0,3,
-    0,0,0,0,1,1,3,0,0,3,1,1,0,0,0,0,3,0,0,3,1,1,0,0,0,3,0,0,3,1,1,0,0,0,3,0,0,3,
-    0,0,0,0,0,0,3,0,0,3,0,0,0,0,0,0,3,0,0,3,0,0,0,0,0,3,0,0,3,0,0,0,0,0,3,0,0,3,
-    0,0,0,0,0,0,3,3,3,3,0,0,0,0,0,0,3,3,3,3,0,0,0,0,0,3,3,3,3,0,0,0,0,0,3,3,3,3,
-    0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    3,3,3,3,0,0,0,0,3,3,3,3,0,0,0,0,3,3,3,3,0,0,0,0,3,3,3,3,0,0,0,0,3,3,3,3,0,0,
-    0,0,0,0,3,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,3,0,
-    0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,
-    1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,1,1,0,0,0,0,0,1,1,1,0,0,
-    0,0,0,0,0,0,0,0,3,3,3,3,0,0,0,0,0,3,3,3,3,0,0,0,0,3,3,3,3,0,0,0,0,3,3,3,3,0,
-    0,0,2,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-    };
 
     std::cout << "Hello I am making a game" << std::endl;
 
@@ -79,6 +32,7 @@ int main()
     Pause pausegame;
 
 
+
     player.Initialize();
     weapon.Initialize();
     enemy.Initialize();
@@ -88,11 +42,33 @@ int main()
     player.load();
     enemy.Load();
     weapon.load();
+    std::string filename = "levels/l1.csv";
+    std::vector<int> level;
+    std::ifstream inputFile(filename);
+    std::string line;
+    while (std::getline(inputFile, line)) {
+        std::stringstream ss(line);
+        std::string cell;
+        while (std::getline(ss, cell, ',')) {
+            try {
 
+                level.push_back(std::stoi(cell));
+            }
+            catch (const std::invalid_argument& e) {
+                std::cerr << "Warning: Invalid integer found in CSV: '" << cell << "'" << std::endl;
+            }
+            catch (const std::out_of_range& e) {
+                std::cerr << "Warning: Integer out of range in CSV: '" << cell << "'" << std::endl;
+            }
+        }
+    }
 
-
-    if (!tmap.load("Assets/World/Prison/tilesetmap.png", { 32, 32 }, level.data(), 38, 25))
+    inputFile.close();
+    if (!tmap.load("Assets/World/Prison/tilesheet.png", { 16, 16 }, level.data(), 50, 38))
         return -1;
+
+
+
 
 
     sf::Clock clock;
@@ -109,15 +85,6 @@ int main()
             {
                 paused = !paused;
                 sf::sleep(sf::milliseconds(200));
-            }
-        }
-
-        // Pause button click handling
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            if (pauseButton.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-                paused = !paused;
-                sf::sleep(sf::milliseconds(200)); // debounce
             }
         }
 
@@ -138,9 +105,6 @@ int main()
         enemy.Draw(window);
 
         weapon.drawBullets(window);
-
-        window.draw(pauseButton);
-        window.draw(pauseText);
 
         window.display();
     }

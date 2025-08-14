@@ -3,23 +3,23 @@
 
 class Pause
 {
-private:
-    sf::Font font;
-    sf::Text pauseText;
-    sf::RectangleShape pauseButton;
-
-    bool isPaused = false;
-
 public:
     Pause();
     ~Pause();
 
-    void load();
     void Draw(sf::RenderWindow& window);
+    void Load(); // Load font and texture
     void Update(float deltaTime, sf::RenderWindow& window);
 
+    bool isPausedActive() const { return isPaused; }
+    void setPaused(bool val) { isPaused = val; }
 
-    bool GetPaused() const { return isPaused; }
+private:
+    sf::Sprite pauseButtonSprite;
+    sf::Texture pauseButtonTexture;
 
-    void SetPaused(bool paused) { isPaused = paused; }
+    sf::Text pauseText;
+    sf::Font font;
+
+    bool isPaused;
 };

@@ -1,29 +1,35 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include <iostream>
-#include <cmath>
+#include "Math.h" // Include Math.h for NormalizeVector
 
-class Weapon
-{
+class Weapon {
 public:
     Weapon();
-    void shoot(float deltaTime, const sf::Vector2f& weaponPos, const sf::Vector2f& target);
-    void drawBullets(sf::RenderWindow& window);
-    void load();
+
     void Initialize();
-    void Update(float deltaTime);
+    void Load();
+    void Update(float deltaTime, const sf::Vector2f& weaponPos, const sf::Vector2f& target);
+    void Draw(sf::RenderWindow& window);
+
+    // Updated signature: now takes only startPos and targetPos (the mouse)
+    void Shoot(const sf::Vector2f& startPos, const sf::Vector2f& targetPos);
+
+    std::vector<sf::Sprite>& getBullets();
+    sf::Sprite& getWeaponSprite();
+
+    std::vector<sf::Vector2f> bulletDirections; // Stores direction for each bullet
 
 private:
-    sf::Sprite weaponSpr;
-    sf::Sprite bullet;
-    sf::Clock clock;
     sf::Texture wTexture;
     sf::Texture bTexture;
-    float gunAngle = 0.f;
-    float fireRate = 0.2f;
-    float bulletSpeed = 500.f;
+    sf::Sprite weaponSpr;
+
     std::vector<sf::Sprite> bullets;
-    std::vector<float> angles;
-    std::vector<float> rotation;
+
+    float fireRate;
+    sf::Clock clock;
+    float bulletSpeed;
+
+    float gunAngle; // Angle of the weapon sprite
 };

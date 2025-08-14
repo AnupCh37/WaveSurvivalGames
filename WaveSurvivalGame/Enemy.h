@@ -1,34 +1,44 @@
 #pragma once
-
 #include <SFML/Graphics.hpp>
-#include <string>
+#include <iostream>
+#include <cmath> // For std::sqrt in Update overloads
+#include "Collision.h"
+#include "Sound.h" // Include Sound class
+
+class Player; // Forward declaration for Player to break circular include
 
 class Enemy
 {
-private:
-    sf::Texture texture;
-    sf::Font font;
-    sf::Text healthtext;
-
-    sf::Vector2i size;
-    sf::RectangleShape boundingRectangle;
-
-    int health;
-
 public:
-    sf::Sprite sprite;
-
     Enemy();
     ~Enemy();
 
-    void Initialize();
-    void Load();
-    void Update(float deltaTime);
-    void Update(float deltaTime, const sf::Vector2f& playerPos);
     void Draw(sf::RenderWindow& window);
     void ChangeHealth(int hp);
+    void Update(float deltaTime);
+    void Update(float deltaTime, const sf::Vector2f& playerPos, Player& player, const std::vector<int>& tiles);
+    void Load(const sf::Vector2f pos);
+    void Initialize();
+    Collision collision;
+    sf::Sprite sprite;
+    sf::FloatRect getGlobalBounds() const { return sprite.getGlobalBounds(); }
+    sf::RectangleShape boundingRectangle;
+    int getHealth() const { return health; }
 
+    // Sound system access
+    Sound* soundSystem; // Pointer to sound system
 
-    int GetHealth() const { return health; }
-    sf::FloatRect GetBounds() const { return sprite.getGlobalBounds(); }
+private:
+    sf::Texture idleTexture;
+    sf::Texture attackTexture;
+    sf::Texture walktexture;
+    sf::Text healthtext;
+    sf::Font font;
+
+    int health;
+    sf::Vector2i size;// Size of enemy sprite frame
+
+    // Attack Cooldown Members
+    float attackCooldown; // Time in seconds between attacks
+    sf::Clock attackClock; // Clock to manage cooldown
 };

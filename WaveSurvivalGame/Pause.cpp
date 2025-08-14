@@ -1,48 +1,64 @@
 #include "Pause.h"
 #include <iostream>
 
+extern bool paused; 
+
 Pause::Pause() : isPaused(false)
 {
     pauseText.setCharacterSize(30);
 }
 
-Pause::~Pause() {
-
-}
+Pause::~Pause() {}
 
 void Pause::Draw(sf::RenderWindow& window) {
-    window.draw(pauseButton);
+    window.draw(pauseButtonSprite); 
     window.draw(pauseText);
 }
 
-void Pause::load()
-{
-    if (!font.loadFromFile("C://Users//anup3//OneDrive//Desktop//rpg game//assets//Fonts//arial.ttf")) {
+void Pause::Load() {
+    // Load font
+    if (!font.loadFromFile("Assets/Fonts/arial.ttf")) {
         std::cout << "Error loading font" << std::endl;
     }
     else {
         std::cout << "Pause text loaded successfully" << std::endl;
     }
 
-    pauseButton.setSize(sf::Vector2f{ 100.f, 50.f });
-    pauseButton.setPosition(sf::Vector2f{ 10.f, 10.f });
-    pauseButton.setFillColor(sf::Color::Blue);
-
     pauseText.setFont(font);
-    pauseText.setString("Pause");
+   //  pauseText.setString("Pause");
     pauseText.setCharacterSize(20);
     pauseText.setFillColor(sf::Color::White);
-    pauseText.setPosition(sf::Vector2f{ 20.f, 15.f });
+    pauseText.setPosition(20.f, 70.f);
+
+    if (!pauseButtonTexture.loadFromFile("Assets/UI/play.png")) {
+        std::cout << "Error loading pause button texture!" << std::endl;
+    }
+    else {
+        std::cout << "Pause texture loaded successfully." << std::endl;
+    }
+
+    pauseButtonTexture.setSmooth(true);
+    pauseButtonSprite.setTexture(pauseButtonTexture);
+    pauseButtonSprite.setTextureRect(sf::IntRect(0, 0, 9, 13)); 
+    pauseButtonSprite.setColor(sf::Color(224,224,224));
+    pauseButtonSprite.setPosition(10.f, 10.f);
+    pauseButtonSprite.setScale(1.5f, 1.5f); 
 }
 
 void Pause::Update(float deltaTime, sf::RenderWindow& window) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
+    sf::FloatRect buttonBounds = pauseButtonSprite.getGlobalBounds();
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        if (pauseButton.getGlobalBounds().contains(worldPos)) {
-            isPaused = !isPaused;
-            sf::sleep(sf::milliseconds(200));
+        if (buttonBounds.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+            if (!isPaused) {
+                paused = !paused;
+                isPaused = true;
+                sf::sleep(sf::milliseconds(200)); 
+            }
         }
+    }
+    else {
+        isPaused = false; 
     }
 }

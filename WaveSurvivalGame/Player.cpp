@@ -23,7 +23,7 @@ int getTileAtPosition(const sf::Vector2f& pos, const std::vector<int>& level)
 }
 
 Player::Player() :
-    idleTexture(), attackTexture(), walkTexture(), psprite(idleTexture),
+    idleTexture(), attackTexture(), walkTexture(), psprite(), // FIXED: Removed idleTexture from psprite initialization
     size({ 100, 100 }),
     boneSpeed(0.4f),
     boneFireRate(0.3f),
@@ -71,6 +71,7 @@ void Player::Load()
 {
     if (idleTexture.loadFromFile("assets/Player/Texture/idle.png"))
     {
+        psprite.setTexture(idleTexture); // FIXED: Added this line to set the texture!
         psprite.setTextureRect({ 0, 0 , size.x, size.y });
         psprite.setScale(2.0f, 2.0f);
         boundingRectangle.setSize(sf::Vector2f(static_cast<float>(size.x) / 4.0f, static_cast<float>(size.y) / 4.0f));
@@ -96,7 +97,7 @@ void Player::Load()
     }
 }
 
-void Player::Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWindow& window, const std::vector<int>& tiles,float speed)
+void Player::Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWindow& window, const std::vector<int>& tiles, float speed)
 {
     sf::Vector2f velocity(0.0f, 0.0f);
     float baseSpeed = speed;
@@ -188,7 +189,7 @@ void Player::Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWind
         newBone.setRotation(rotationAngleRad * 180.0f / static_cast<float>(M_PI));
 
         // 🔹 Create bounding rectangle for the arrow
-        sf::RectangleShape boneRect(sf::Vector2f(newBone.getGlobalBounds().width/2.25f, newBone.getGlobalBounds().height/2.25f));
+        sf::RectangleShape boneRect(sf::Vector2f(newBone.getGlobalBounds().width / 2.25f, newBone.getGlobalBounds().height / 2.25f));
         boneRect.setFillColor(sf::Color::Transparent);
         boneRect.setOutlineColor(sf::Color::Transparent); // Debug color
         boneRect.setOutlineThickness(1.0f);

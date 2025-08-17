@@ -1,141 +1,154 @@
-#define _USE_MATH_DEFINES // IMPORTANT: Add this line at the very top for M_PI
 #include "Enemy.h"
 #include <iostream>
 #include <cmath>
 #include "Player.h"
 #include "Collision.h"
 
-Enemy::Enemy()
-    : 
-    sprite(idleTexture), health(100), healthtext(), size({ 100, 100 }),
-    attackCooldown(1.0f),
-    attackClock(),
-    soundSystem(nullptr)
+Enemy::Enemy(float sp)
+    : speed(sp), sprite(idleTexture), health(100), maxHealth(100), size({ 100,100 }),
+    attackCooldown(1.0f), attackClock(), animationTimer(0.0f), currentFrame(0),
+    frameTime(0.15f), totalFrames(6), wasMoving(false), soundSystem(nullptr)
 {
-    healthtext.setCharacterSize(30);
-    healthtext.setFillColor(sf::Color::Red);
-    // Initialize boundingRectangle
     boundingRectangle.setFillColor(sf::Color::Transparent);
     boundingRectangle.setOutlineColor(sf::Color::Red);
-    boundingRectangle.setOutlineThickness(1.0f); // Use float literal
-    boundingRectangle.setSize(sf::Vector2f(size.x / 4.0f, size.y / 4.0f)); // Use float literals
+    boundingRectangle.setOutlineThickness(1.0f);
+    boundingRectangle.setSize(sf::Vector2f(size.x / 4.0f, size.y / 4.0f));
+
+    // Health bar setup
+    healthBarBackground.setSize(sf::Vector2f(30.0f, 6.0f));
+    healthBarBackground.setFillColor(sf::Color::Red);
+    healthBarBackground.setOutlineColor(sf::Color::Black);
+    healthBarBackground.setOutlineThickness(1.0f);
+
+    healthBarForeground.setSize(sf::Vector2f(30.0f, 6.0f));
+    healthBarForeground.setFillColor(sf::Color::Green);
 }
 
 Enemy::~Enemy() {}
+
+bool Enemy::Load(const sf::Vector2f pos)
+{
+    if (!idleTexture.loadFromFile("Assets/Player/Texture/Orc_idle.png")) {
+        std::cout << "Failed to load idle texture!" << std::endl;
+        return false;
+    }
+
+    if (!walkTexture.loadFromFile("Assets/Player/Texture/Orc_walk.png")) {
+        std::cout << "Failed to load walk texture!" << std::endl;
+        return false;
+    }
+
+    sprite.setTexture(idleTexture);
+    sprite.setPosition(pos);
+    sprite.setTextureRect(sf::IntRect(0, 0, size.x, size.y));
+    sprite.setScale(1.8f, 1.8f);
+    sprite.setOrigin(size.x / 2.0f, size.y / 2.0f);
+    boundingRectangle.setOrigin(size.x / 8.0f, size.y / 8.0f);
+
+    // Position health bars
+    sf::Vector2f healthBarPos(pos.x - 15.0f, pos.y - 80.0f);
+    healthBarBackground.setPosition(healthBarPos);
+    healthBarForeground.setPosition(healthBarPos);
+
+    return true;
+}
+
+void Enemy::Update(float deltaTime, const sf::Vector2f& playerPos, Player& player, const std::vector<int>& tiles)
+{
+    if (health <= 0) return;
+
+    sf::Vector2f direction = playerPos - sprite.getPosition();
+    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    bool moving = (length > 0.0f);
+
+    if (moving) direction /= length;
+
+    sf::Vector2f velocity = direction * speed * deltaTime;
+
+    sf::FloatRect testX = boundingRectangle.getGlobalBounds();
+    testX.left += velocity.x;
+    if (!collision.checkCollision(testX, tiles)) sprite.move(velocity.x, 0.0f);
+
+    sf::FloatRect testY = boundingRectangle.getGlobalBounds();
+    testY.top += velocity.y;
+    if (!collision.checkCollision(testY, tiles)) sprite.move(0.0f, velocity.y);
+
+    boundingRectangle.setPosition(sprite.getPosition());
+
+    sf::Vector2f healthBarPos(sprite.getPosition().x - 15.0f, sprite.getPosition().y - 30.0f);
+    healthBarBackground.setPosition(healthBarPos);
+    healthBarForeground.setPosition(healthBarPos);
+
+
+    float healthPercentage = static_cast<float>(health) / static_cast<float>(maxHealth);
+    healthBarForeground.setSize(sf::Vector2f(30.0f * healthPercentage, 6.0f));
+
+    if (healthPercentage > 0.6f) {
+        healthBarForeground.setFillColor(sf::Color::Green);
+    }
+    else if (healthPercentage > 0.3f) {
+        healthBarForeground.setFillColor(sf::Color::Yellow);
+    }
+    else if(healthPercentage>0.9f) {
+        healthBarForeground.setFillColor(sf::Color::Red);
+    }
+    else
+    {
+
+    }
+
+    if (length < 40.0f) {
+        if (attackClock.getElapsedTime().asSeconds() >= attackCooldown) {
+            if (player.getGlobalBounds().intersects(sprite.getGlobalBounds())) {
+                if (soundSystem) soundSystem->playSound("axeHit", 85.0f);
+                player.ChangeHealth(-10);
+                attackClock.restart();
+            }
+        }
+    }
+
+    if (moving) {
+        animationTimer += deltaTime / 1000.0f;
+        if (animationTimer >= frameTime) {
+            animationTimer = 0.0f;
+            currentFrame = (currentFrame + 1) % totalFrames;
+        }
+
+        sprite.setTexture(walkTexture);
+        if (direction.x < 0.0f) {
+            sprite.setScale(1.8f, 1.8f);
+            sprite.setTextureRect(sf::IntRect((currentFrame + 1) * size.x, 0, -size.x, size.y));
+        }
+        else {
+            sprite.setScale(1.8f, 1.8f);
+            sprite.setTextureRect(sf::IntRect(currentFrame * size.x, 0, size.x, size.y));
+        }
+        wasMoving = true;
+    }
+    else if (wasMoving) {
+        sprite.setTexture(idleTexture);
+        sprite.setTextureRect(sf::IntRect(0, 0, size.x, size.y));
+        currentFrame = 0;
+        animationTimer = 0.0f;
+        wasMoving = false;
+    }
+}
+
 void Enemy::Draw(sf::RenderWindow& window)
 {
     if (health > 0) {
         window.draw(sprite);
         window.draw(boundingRectangle);
-        window.draw(healthtext); // Ensure healthtext is drawn
+
+        // Draw health bar
+        window.draw(healthBarBackground);
+        window.draw(healthBarForeground);
     }
 }
 
-void Enemy::ChangeHealth(int hp) {
+void Enemy::ChangeHealth(int hp)
+{
     health += hp;
-    if (health < 0) health = 0; // Prevent health from going below zero
-    healthtext.setString(std::to_string(health));
-    std::cout << "Enemy Health (in ChangeHealth): " << health << std::endl; // Debug print
-}
-
-void Enemy::Update(float deltaTime) // Changed to float deltaTime
-{
-    if (health > 0) {
-        boundingRectangle.setPosition(sprite.getPosition());
-
-
-
-    }
-}
-
-// --- UPDATED: Update signature to include Player& player ---
-void Enemy::Update(float deltaTime, const sf::Vector2f& playerPos, Player& player, const std::vector<int>& tiles)
-{
-    if (health <= 0)
-        return; // If health is 0 or less, stop updating this enemy
-
-    float speed = 0.066f;
-    sf::Vector2f direction = playerPos - sprite.getPosition();
-    if (direction.x < 0)
-    {
-        sprite.setScale(-1.8f, 1.8f);
-    }
-    else
-    {
-        sprite.setScale(1.8f, 1.8f);
-    }
-    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y); // Declared here
-    if (length != 0.0f) // Use float literal
-        direction /= length;
-
-    sf::Vector2f velocity = direction * speed * deltaTime;
-
-    // --- Collision-aware movement ---
-
-    // Try horizontal move
-    sf::Vector2f tryMoveX(velocity.x, 0.0f); // Use float literal
-    sf::FloatRect testXBounds = boundingRectangle.getGlobalBounds();
-    testXBounds.left += tryMoveX.x;
-
-    if (!collision.checkCollision(testXBounds, tiles)) {
-        sprite.move(tryMoveX);
-    }
-
-    // Try vertical move
-    sf::Vector2f tryMoveY(0.0f, velocity.y); // Use float literal
-    sf::FloatRect testYBounds = boundingRectangle.getGlobalBounds();
-    testYBounds.top += tryMoveY.y;
-
-    if (!collision.checkCollision(testYBounds, tiles)) {
-        sprite.move(tryMoveY);
-    }
-
-    // --- Position updates ---
-    boundingRectangle.setPosition(sprite.getPosition());
-    healthtext.setPosition(boundingRectangle.getPosition().x - healthtext.getLocalBounds().width / 2.0f,
-        boundingRectangle.getPosition().y - healthtext.getLocalBounds().height / 2.0f - 35.0f);
-
-    float distanceToPlayer = length;
-    if (distanceToPlayer < 50.0f) {
-        if (attackClock.getElapsedTime().asSeconds() >= attackCooldown) {
-            if (player.getGlobalBounds().intersects(sprite.getGlobalBounds())) {
-                
-                if (soundSystem) {
-                    soundSystem->playSound("axeHit", 85.0f);
-                }
-
-                player.ChangeHealth(-10);
-                attackClock.restart();
-                std::cout << "Enemy attacked player! Player Health: " << player.getHealth() << std::endl;
-            }
-        }
-    }
-}
-
-void Enemy::Load(const sf::Vector2f pos)
-{
-    if (font.loadFromFile("Assets/Fonts/arial.ttf")) {
-        healthtext.setFont(font);
-        healthtext.setCharacterSize(16);
-        healthtext.setString(std::to_string(health));
-    }
-    else {
-        std::cout << "Failed to load Arial.ttf font." << std::endl;
-    }
-
-    if (idleTexture.loadFromFile("Assets/Player/Texture/Orc_idle.png")) { // Assuming enemy uses player spritesheet for now
-        sprite.setPosition(sf::Vector2f(pos.x, pos.y));
-        sprite.setTextureRect(sf::IntRect(0, 0, size.x, size.y));
-        sprite.setScale(1.8f, 1.8f);
-        sprite.setOrigin(size.x / 2.0f, size.y / 2.0f);
-        boundingRectangle.setOrigin(size.x / 8.0f, size.y / 8.0f);// Set origin for proper positioning
-    }
-    else {
-        std::cout << "Failed to load enemy image." << std::endl;
-    }
-}
-
-void Enemy::Initialize()
-{
-    // All initialization moved to constructor or Load()
+    if (health < 0) health = 0;
+    if (health > maxHealth) health = maxHealth;
 }

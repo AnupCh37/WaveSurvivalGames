@@ -1,12 +1,12 @@
-#define _USE_MATH_DEFINES
+﻿#define _USE_MATH_DEFINES
 #include "Player.h"
 #include "Math.h"
 #include <iostream>
-#include <string> // Required for std::to_string
+#include <string>
 #include <cmath>
 #include "Enemy.h"
 
-// Global function getTileAtPosition (assuming it's intended to be global)
+// Global function getTileAtPosition
 int getTileAtPosition(const sf::Vector2f& pos, const std::vector<int>& level)
 {
     const int tilew = 16;
@@ -17,11 +17,10 @@ int getTileAtPosition(const sf::Vector2f& pos, const std::vector<int>& level)
     int y = static_cast<int>(pos.y) / inttileh;
 
     if (x < 0 || x >= mapw || y < 0 || y >= maph)
-        return -1; // Indicate out of bounds
+        return -1;
 
     return level[y * mapw + x];
 }
-
 
 Player::Player() :
     idleTexture(), attackTexture(), walkTexture(), psprite(idleTexture),
@@ -34,59 +33,49 @@ Player::Player() :
     currentFrame(0),
     frameTime(0.1f),
     totalFrames(6),
-    soundSystem(nullptr), // Initialize sound system pointer
+    soundSystem(nullptr),
     wasMoving(false)
 {
     boundingRectangle.setFillColor(sf::Color::Transparent);
-    boundingRectangle.setOutlineColor(sf::Color::Transparent);
-    boundingRectangle.setOutlineThickness(1.0f); // Use float literal
-    boundingRectangle.setSize(sf::Vector2f(32.0f, 32.0f)); // Use float literals
+    boundingRectangle.setOutlineColor(sf::Color::Blue);
+    boundingRectangle.setOutlineThickness(1.0f);
+    boundingRectangle.setSize(sf::Vector2f(32.0f, 32.0f));
     psprite.setOrigin(size.x / 2.0f, size.y / 2.0f);
 
-    //  Configure Player Health Text
-    healthText.setCharacterSize(20); // Smaller font size for HP
-    healthText.setFillColor(sf::Color::Green); // Green color for player HP
-    healthText.setString(std::to_string(health)); // Set initial health string
+    healthText.setCharacterSize(20);
+    healthText.setFillColor(sf::Color::Green);
+    healthText.setString(std::to_string(health));
 }
 
 Player::~Player()
 {
-    // Destructor definition
 }
+
 void Player::ChangeHealth(int hp) {
     int oldHealth = health;
     health += hp;
     if (health < 0)
-    {
         health = 0;
-    }
     healthText.setString(std::to_string(health));
 
-    // Play hurt sound when taking damage
     if (hp < 0 && soundSystem) {
         soundSystem->playSound("playerHurt", 80.0f);
     }
-
-    // Play death sound when health reaches 0
     if (oldHealth > 0 && health == 0 && soundSystem) {
         soundSystem->playSound("playerDeath", 100.0f);
     }
-
     std::cout << "Player Health Changed to: " << health << std::endl;
 }
-
 
 void Player::Load()
 {
     if (idleTexture.loadFromFile("assets/Player/Texture/idle.png"))
     {
-
-        int Xindex = 2, Yindex = 2;
         psprite.setTextureRect({ 0, 0 , size.x, size.y });
         psprite.setScale(2.0f, 2.0f);
-        boundingRectangle.setSize(sf::Vector2f(static_cast<float>(size.x) / 4.0f, static_cast<float>(size.y) / 4.0f)); // Use float literals
+        boundingRectangle.setSize(sf::Vector2f(static_cast<float>(size.x) / 4.0f, static_cast<float>(size.y) / 4.0f));
         boundingRectangle.setPosition(400.0f, 300.0f);
-        boundingRectangle.setOrigin(sf::Vector2f(static_cast<float>(size.x) / 8.0f, static_cast<float>(size.y) / 8.0f)); // Use float literals
+        boundingRectangle.setOrigin(sf::Vector2f(static_cast<float>(size.x) / 8.0f, static_cast<float>(size.y) / 8.0f));
         psprite.setPosition(400.0f, 300.0f);
     }
     else
@@ -94,30 +83,25 @@ void Player::Load()
         std::cout << "Player image cannot be loaded\n";
     }
 
-    if (boneTexture.loadFromFile("Assets/GunAssets/PNG/arrow.png")) {
-        // Bone texture loaded message removed
-    }
-    else {
-        std::cout << "Failed to load Bone texture. Make sure 'Assets/GunAssets/PNG/arrow.png' exists.\n";
+    if (!boneTexture.loadFromFile("Assets/GunAssets/PNG/arrow.png")) {
+        std::cout << "Failed to load Bone texture.\n";
     }
 
-    //  Load Font for Player Health Text
-    if (font.loadFromFile("Assets/Fonts/arial.ttf")) { // Assuming this path is correct for your font
+    if (font.loadFromFile("Assets/Fonts/arial.ttf")) {
         healthText.setFont(font);
         healthText.setCharacterSize(16);
-        // std::cout << "Player health font loaded successfully." << std::endl; // Debug print removed
     }
     else {
-        std::cout << "Failed to load font for player health. Make sure 'Assets/Fonts/arial.ttf' exists.\n";
+        std::cout << "Failed to load font for player health.\n";
     }
 }
-void Player::Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWindow& window, const std::vector<int>& tiles)
+
+void Player::Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWindow& window, const std::vector<int>& tiles,float speed)
 {
-    sf::Vector2f velocity(0.0f, 0.0f); // Use float literals
-    float baseSpeed = 300.0f;
+    sf::Vector2f velocity(0.0f, 0.0f);
+    float baseSpeed = speed;
     bool Moving = false;
     float moveAmount = baseSpeed * deltaTime / 1000.0f;
-
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
         velocity.y -= moveAmount;
@@ -140,12 +124,10 @@ void Player::Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWind
 
     if (Moving) {
         if (!wasMoving && soundSystem) {
-            // Start walking sound when player starts moving
             soundSystem->playSound("playerWalk", 60.0f, 1.2f);
         }
         wasMoving = true;
 
-        // Continue existing animation code...
         animationTimer += deltaTime / 1000.0f;
         if (animationTimer >= frameTime) {
             animationTimer = 0.0f;
@@ -157,12 +139,10 @@ void Player::Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWind
     }
     else {
         if (wasMoving && soundSystem) {
-            // Stop walking sound when player stops moving
             soundSystem->stopSound("playerWalk");
         }
         wasMoving = false;
 
-        // Continue existing idle animation code...
         if (currentFrame != 0) {
             currentFrame = 0;
             animationTimer = 0.0f;
@@ -173,80 +153,92 @@ void Player::Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWind
 
     sf::FloatRect bounds = boundingRectangle.getGlobalBounds();
 
-    // Try horizontal move
     sf::FloatRect testXBounds = bounds;
     testXBounds.left += velocity.x;
     bool canMoveX = !collision.checkCollision(testXBounds, tiles);
 
-    // Try vertical move
     sf::FloatRect testYBounds = bounds;
     testYBounds.top += velocity.y;
     bool canMoveY = !collision.checkCollision(testYBounds, tiles);
 
-    if (canMoveX) psprite.move(velocity.x, 0.0f); // Use float literal
-    if (canMoveY) psprite.move(0.0f, velocity.y); // Use float literal
-    if (canMoveX) boundingRectangle.move(velocity.x, 0.0f); // Use float literal
-    if (canMoveY) boundingRectangle.move(0.0f, velocity.y); // Use float literal
+    if (canMoveX) psprite.move(velocity.x, 0.0f);
+    if (canMoveY) psprite.move(0.0f, velocity.y);
+    if (canMoveX) boundingRectangle.move(velocity.x, 0.0f);
+    if (canMoveY) boundingRectangle.move(0.0f, velocity.y);
 
-    // Update health text position
     healthText.setPosition(
         boundingRectangle.getPosition().x - healthText.getLocalBounds().width / 2.0f,
         boundingRectangle.getPosition().y - healthText.getLocalBounds().height / 2.0f - 35.0f
     );
 
-    // Bone shooting
     sf::Vector2f mouseWorldPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && boneFireClock.getElapsedTime().asSeconds() > boneFireRate)
     {
-        // Play arrow shooting sound
         if (soundSystem) {
             soundSystem->playSound("arrowShoot", 70.0f, 1.1f);
         }
 
-        // Continue existing bone shooting code...
         sf::Sprite newBone(boneTexture);
         newBone.setPosition(psprite.getPosition());
         newBone.setOrigin(newBone.getLocalBounds().width / 2.0f, newBone.getLocalBounds().height / 2.0f);
-        newBone.setScale(1.5f, 1.5f);
+        newBone.setScale(1.15f, 1.15f);
 
         sf::Vector2f direction = Math::NormalizeVector(mouseWorldPos - psprite.getPosition());
         float rotationAngleRad = std::atan2(direction.y, direction.x);
         newBone.setRotation(rotationAngleRad * 180.0f / static_cast<float>(M_PI));
 
+        // 🔹 Create bounding rectangle for the arrow
+        sf::RectangleShape boneRect(sf::Vector2f(newBone.getGlobalBounds().width/2.25f, newBone.getGlobalBounds().height/2.25f));
+        boneRect.setFillColor(sf::Color::Transparent);
+        boneRect.setOutlineColor(sf::Color::Transparent); // Debug color
+        boneRect.setOutlineThickness(1.0f);
+        boneRect.setOrigin(boneRect.getSize() / 2.0f);
+        boneRect.setPosition(newBone.getPosition());
+
         bones.push_back(newBone);
         boneDirections.push_back(direction);
+        boneBounds.push_back(boneRect); // NEW
+
         boneFireClock.restart();
     }
 
-    // Bone movement and collision
-    for (size_t i = 0; i < bones.size(); /* no increment here */) {
-        bones[i].move(boneDirections[i] * boneSpeed * deltaTime);
+    // 🔹 Arrow update loop with bounding rectangles
+    for (size_t i = 0; i < bones.size();) {
+        sf::Vector2f movement = boneDirections[i] * boneSpeed * deltaTime;
+        bones[i].move(movement);
+        boneBounds[i].move(movement);
+
         bool hit = false;
 
-        for (auto& enemy : enemies)
-        {
-            if (enemy.getHealth() > 0 && Math::DidRectCollision(bones[i].getGlobalBounds(), enemy.boundingRectangle.getGlobalBounds())) {
-                enemy.ChangeHealth(-10);
-                std::cout << "Enemy hit! Current Enemy Health: " << enemy.getHealth() << std::endl; // Debug print
-                bones.erase(bones.begin() + i);
-                boneDirections.erase(boneDirections.begin() + i);
-                hit = true;
-                break;
+        sf::FloatRect arrowBounds = boneBounds[i].getGlobalBounds();
+        if (collision.checkCollision(arrowBounds, tiles)) {
+            bones.erase(bones.begin() + i);
+            boneDirections.erase(boneDirections.begin() + i);
+            boneBounds.erase(boneBounds.begin() + i);
+            hit = true;
+        }
+
+        if (!hit) {
+            for (auto& enemy : enemies) {
+                if (enemy.getHealth() > 0 && Math::DidRectCollision(arrowBounds, enemy.boundingRectangle.getGlobalBounds())) {
+                    enemy.ChangeHealth(-10);
+                    std::cout << "Enemy hit! Current Enemy Health: " << enemy.getHealth() << std::endl;
+                    bones.erase(bones.begin() + i);
+                    boneDirections.erase(boneDirections.begin() + i);
+                    boneBounds.erase(boneBounds.begin() + i);
+                    hit = true;
+                    break;
+                }
             }
         }
-        if (hit)
-        {
-            continue;
-        }
-        else {
-            sf::FloatRect boneBounds = bones[i].getGlobalBounds();
-            sf::Vector2u windowSize = window.getSize();
 
-            if (boneBounds.left > windowSize.x || boneBounds.left + boneBounds.width < 0 ||
-                boneBounds.top > windowSize.y || boneBounds.top + boneBounds.height < 0)
-            {
+        if (!hit) {
+            sf::Vector2u windowSize = window.getSize();
+            if (arrowBounds.left > windowSize.x || arrowBounds.left + arrowBounds.width < 0 ||
+                arrowBounds.top > windowSize.y || arrowBounds.top + arrowBounds.height < 0) {
                 bones.erase(bones.begin() + i);
                 boneDirections.erase(boneDirections.begin() + i);
+                boneBounds.erase(boneBounds.begin() + i);
             }
             else {
                 ++i;
@@ -254,9 +246,6 @@ void Player::Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWind
         }
     }
 }
-
-
-
 
 void Player::Draw(float deltaTime, sf::RenderWindow& window)
 {
@@ -266,6 +255,10 @@ void Player::Draw(float deltaTime, sf::RenderWindow& window)
     for (const auto& bone : bones) {
         window.draw(bone);
     }
- 
+    // 🔹 Draw arrow bounding boxes (debug)
+    for (const auto& bound : boneBounds) {
+        window.draw(bound);
+    }
+
     window.draw(healthText);
 }

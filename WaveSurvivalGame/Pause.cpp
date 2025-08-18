@@ -16,7 +16,7 @@ void Pause::Draw(sf::RenderWindow& window) {
 }
 
 void Pause::Load() {
-    // Load font
+    
     if (!font.loadFromFile("Assets/Fonts/arial.ttf")) {
         std::cout << "Error loading font" << std::endl;
     }
@@ -25,7 +25,6 @@ void Pause::Load() {
     }
 
     pauseText.setFont(font);
-   //  pauseText.setString("Pause");
     pauseText.setCharacterSize(20);
     pauseText.setFillColor(sf::Color::White);
     pauseText.setPosition(20.f, 70.f);

@@ -44,7 +44,6 @@ private:
     int totalFrames;
     bool wasMoving;
 
-    // Health bar components
     sf::RectangleShape healthBarBackground;
     sf::RectangleShape healthBarForeground;
 };

@@ -14,7 +14,7 @@ Enemy::Enemy(float sp)
     boundingRectangle.setOutlineThickness(1.0f);
     boundingRectangle.setSize(sf::Vector2f(size.x / 4.0f, size.y / 4.0f));
 
-    // Health bar setup
+    
     healthBarBackground.setSize(sf::Vector2f(30.0f, 6.0f));
     healthBarBackground.setFillColor(sf::Color::Red);
     healthBarBackground.setOutlineColor(sf::Color::Black);
@@ -45,7 +45,7 @@ bool Enemy::Load(const sf::Vector2f pos)
     sprite.setOrigin(size.x / 2.0f, size.y / 2.0f);
     boundingRectangle.setOrigin(size.x / 8.0f, size.y / 8.0f);
 
-    // Position health bars
+
     sf::Vector2f healthBarPos(pos.x - 15.0f, pos.y - 80.0f);
     healthBarBackground.setPosition(healthBarPos);
     healthBarForeground.setPosition(healthBarPos);
@@ -89,7 +89,7 @@ void Enemy::Update(float deltaTime, const sf::Vector2f& playerPos, Player& playe
     else if (healthPercentage > 0.3f) {
         healthBarForeground.setFillColor(sf::Color::Yellow);
     }
-    else if(healthPercentage>0.9f) {
+    else if (healthPercentage > 0.9f) {
         healthBarForeground.setFillColor(sf::Color::Red);
     }
     else
@@ -140,7 +140,7 @@ void Enemy::Draw(sf::RenderWindow& window)
         window.draw(sprite);
         window.draw(boundingRectangle);
 
-        // Draw health bar
+      
         window.draw(healthBarBackground);
         window.draw(healthBarForeground);
     }

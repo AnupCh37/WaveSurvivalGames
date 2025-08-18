@@ -3,9 +3,9 @@
 
 int Collision::getTileAtPosition(const sf::Vector2f& position, const std::vector<int>& tiles)
 {
-    // Dummy version for now – replace with your actual logic
+ 
     int tileSize = 16;
-    int widthInTiles = 50; // adjust to your actual map width
+    int widthInTiles = 50; 
     int x = static_cast<int>(position.x) / tileSize;
     int y = static_cast<int>(position.y) / tileSize;
     int index = x + y * widthInTiles;
@@ -16,9 +16,9 @@ int Collision::getTileAtPosition(const sf::Vector2f& position, const std::vector
 bool Collision::checkCollision(const sf::FloatRect& bounds, const std::vector<int>& tiles)
 {
     int tileSize = 16;
-    int mapWidth = 50; // or pass this as parameter
+    int mapWidth = 50; 
 
-    // Get tile range covered by bounds
+    
     int startX = static_cast<int>(bounds.left) / tileSize;
     int endX = static_cast<int>(bounds.left + bounds.width) / tileSize;
     int startY = static_cast<int>(bounds.top) / tileSize;

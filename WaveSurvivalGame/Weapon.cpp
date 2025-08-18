@@ -1,8 +1,8 @@
-#define _USE_MATH_DEFINES // IMPORTANT: Must be before #include <cmath>
-#include <cmath> // For std::atan2, M_PI
+#define _USE_MATH_DEFINES 
+#include <cmath> 
 #include <iostream>
 #include "Weapon.h"
-#include "Math.h" // For Math::NormalizeVector
+#include "Math.h"
 
 Weapon::Weapon() : weaponSpr(wTexture), fireRate(0.2f), bulletSpeed(0.5f), gunAngle(0.0f)
 {
@@ -35,24 +35,24 @@ void Weapon::Update(float deltaTime, const sf::Vector2f& weaponPos, const sf::Ve
     weaponSpr.setPosition(weaponPos);
 
     sf::Vector2f directionToTarget = target - weaponSpr.getPosition();
-    gunAngle = std::atan2(directionToTarget.y, directionToTarget.x); // Radians
+    gunAngle = std::atan2(directionToTarget.y, directionToTarget.x); 
 
     weaponSpr.setRotation(gunAngle * 180.0f / static_cast<float>(M_PI));
 
-    // Flip weapon sprite if pointing left
+  
     if (directionToTarget.x < 0.0f && weaponSpr.getScale().y > 0.0f)
         weaponSpr.setScale(weaponSpr.getScale().x, -weaponSpr.getScale().y);
     else if (directionToTarget.x > 0.0f && weaponSpr.getScale().y < 0.0f)
         weaponSpr.setScale(weaponSpr.getScale().x, -weaponSpr.getScale().y);
 
-    // Update bullet positions
+
     for (std::size_t i = 0; i < bullets.size(); ++i)
     {
         bullets[i].move(bulletDirections[i] * bulletSpeed * deltaTime);
     }
 }
 
-// Updated definition to match the new signature (only takes startPos and targetPos)
+
 void Weapon::Shoot(const sf::Vector2f& startPos, const sf::Vector2f& targetPos)
 {
     if (clock.getElapsedTime().asSeconds() > fireRate) {
@@ -60,18 +60,17 @@ void Weapon::Shoot(const sf::Vector2f& startPos, const sf::Vector2f& targetPos)
         newBullet.setPosition(startPos);
         newBullet.setOrigin(newBullet.getLocalBounds().width / 2.0f, newBullet.getLocalBounds().height / 2.0f);
 
-        newBullet.setScale(0.5f, 0.5f); // Make the bullet half its original size
+        newBullet.setScale(0.5f, 0.5f); 
 
-        // **Both movement and rotation are now based on the same target: targetPos (mouse)**
+      
         sf::Vector2f direction = Math::NormalizeVector(targetPos - startPos);
         float rotationAngleRad = std::atan2(targetPos.y - startPos.y, targetPos.x - startPos.x);
 
-        // Adjust for the bullet texture pointing UPWARD at 0 degrees
-        // Subtract 90 degrees (M_PI/2 radians) from the calculated angle.
-        newBullet.setRotation((rotationAngleRad - (static_cast<float>(M_PI) / 2.0f)) * 180.0f / static_cast<float>(M_PI)); // Convert to degrees
+ 
+        newBullet.setRotation((rotationAngleRad - (static_cast<float>(M_PI) / 2.0f)) * 180.0f / static_cast<float>(M_PI)); 
 
         bullets.push_back(newBullet);
-        bulletDirections.push_back(direction); // Store movement direction for Update loop
+        bulletDirections.push_back(direction); 
 
         clock.restart();
     }

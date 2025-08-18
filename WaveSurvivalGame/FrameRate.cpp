@@ -3,7 +3,7 @@
 #include <string>
 
 
-FrameRate::FrameRate() : timer(0.0f), frameCount(0) { // Initialized frameCount here
+FrameRate::FrameRate() : timer(0.0f), frameCount(0) { 
     std::cout << "FrameRate system initialized.\\n";
 }
 
@@ -19,8 +19,8 @@ void FrameRate::Initialize() {
 }
 
 
-void FrameRate::Load() { // Standardized to capital L
-    if (font.loadFromFile("Assets/Fonts/arial.ttf")) { // Corrected path
+void FrameRate::Load() { 
+    if (font.loadFromFile("Assets/Fonts/arial.ttf")) { 
         std::cout << "Arial.ttf font loaded successfully.\\n";
         text.setFont(font);
         text.setCharacterSize(16);
@@ -34,17 +34,17 @@ void FrameRate::Load() { // Standardized to capital L
 }
 
 
-void FrameRate::Update(float deltaTime) { // Changed to float deltaTime
+void FrameRate::Update(float deltaTime) { 
     timer += deltaTime;
-    frameCount++; // Increment frame count every frame
+    frameCount++; 
 
-    if (timer >= 1000.0f) { // If a second has passed, changed to float literal
-        float fps = static_cast<float>(frameCount) / (timer / 1000.0f); // Calculate FPS, changed to float casts
+    if (timer >= 1000.0f) { 
+        float fps = static_cast<float>(frameCount) / (timer / 1000.0f); 
         std::string frameRateString = "FPS: " + std::to_string(static_cast<int>(fps)) +
             " | Frame Time: " + std::to_string(static_cast<int>(deltaTime)) + " ms";
         text.setString(frameRateString);
-        timer = 0.0f; // Reset timer
-        frameCount = 0; // Reset frame count
+        timer = 0.0f; 
+        frameCount = 0; 
     }
 }
 

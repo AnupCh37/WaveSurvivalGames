@@ -4,10 +4,9 @@
 #include "Enemy.h"
 #include "Sound.h"
 
-// DelayTimer utility class
 class DelayTimer {
 private:
-    mutable sf::Clock clock;  // Make clock mutable so it can be modified in const methods
+    mutable sf::Clock clock;  
     float duration;
     bool active;
 
@@ -42,7 +41,7 @@ class WaveManager {
 private:
     int currentWave;
     Sound* soundSystem;
-    DelayTimer waveTimer;  // This line is crucial - make sure it's here!
+    DelayTimer waveTimer;  
 
 public:
     WaveManager(Sound* soundSys);

@@ -16,7 +16,7 @@ Menu::~Menu() {
 }
 
 void Menu::Load() {
-    // Load font - try OldLondon first, fallback to arial
+  
     if (!font.loadFromFile("Assets/Fonts/OldLondon.ttf")) {
         if (!font.loadFromFile("Assets/Fonts/arial.ttf")) {
             std::cout << "Error: Could not load menu font!" << std::endl;
@@ -28,19 +28,18 @@ void Menu::Load() {
 }
 
 void Menu::setupIntroMenu() {
-    // Title
+   
     titleText.setFont(font);
     titleText.setString("WAVE SURVIVAL");
     titleText.setCharacterSize(64);
     titleText.setFillColor(sf::Color::White);
     titleText.setStyle(sf::Text::Bold);
 
-    // Center the title
     sf::FloatRect titleBounds = titleText.getLocalBounds();
     titleText.setOrigin(titleBounds.width / 2.0f, titleBounds.height / 2.0f);
     titleText.setPosition(400.0f, 180.0f);
 
-    // Play button
+  
     playButton.setSize(sf::Vector2f(200.0f, 60.0f));
     playButton.setFillColor(sf::Color(50, 50, 50, 200));
     playButton.setOutlineThickness(3.0f);
@@ -56,7 +55,7 @@ void Menu::setupIntroMenu() {
     playButtonText.setOrigin(playBounds.width / 2.0f, playBounds.height / 2.0f);
     playButtonText.setPosition(400.0f, 320.0f);
 
-    // Exit button
+ 
     exitButton.setSize(sf::Vector2f(200.0f, 60.0f));
     exitButton.setFillColor(sf::Color(50, 50, 50, 200));
     exitButton.setOutlineThickness(3.0f);
@@ -74,7 +73,7 @@ void Menu::setupIntroMenu() {
 }
 
 void Menu::setupGameOverMenu() {
-    // Game Over title
+    
     gameOverText.setFont(font);
     gameOverText.setString("GAME OVER");
     gameOverText.setCharacterSize(56);
@@ -85,12 +84,12 @@ void Menu::setupGameOverMenu() {
     gameOverText.setOrigin(gameOverBounds.width / 2.0f, gameOverBounds.height / 2.0f);
     gameOverText.setPosition(400.0f, 150.0f);
 
-    // Stats text
+   
     statsText.setFont(font);
     statsText.setCharacterSize(24);
     statsText.setFillColor(sf::Color::White);
 
-    // Main Menu button
+    
     mainMenuButton.setSize(sf::Vector2f(250.0f, 60.0f));
     mainMenuButton.setFillColor(sf::Color(50, 50, 50, 200));
     mainMenuButton.setOutlineThickness(3.0f);
@@ -124,7 +123,7 @@ void Menu::updateIntroMenu(sf::RenderWindow& window, MenuState& gameState) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
     bool currentMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
-    // Check play button
+    
     playButtonHovered = isMouseOverButton(playButton, window);
     updateButtonAppearance(playButton, playButtonText, playButtonHovered);
 
@@ -132,7 +131,7 @@ void Menu::updateIntroMenu(sf::RenderWindow& window, MenuState& gameState) {
         gameState = MenuState::PLAYING;
     }
 
-    // Check exit button
+   
     exitButtonHovered = isMouseOverButton(exitButton, window);
     updateButtonAppearance(exitButton, exitButtonText, exitButtonHovered);
 
@@ -147,7 +146,7 @@ void Menu::updateGameOverMenu(sf::RenderWindow& window, MenuState& gameState) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
     bool currentMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
-    // Update stats text
+   
     std::string statsString = "Survival Time: " + std::to_string(survivalTime) + " seconds\n";
     statsString += "Waves Survived: " + std::to_string(wavesSurvived) + "\n";
     statsString += "Enemies Killed: " + std::to_string(enemiesKilled);
@@ -157,7 +156,7 @@ void Menu::updateGameOverMenu(sf::RenderWindow& window, MenuState& gameState) {
     statsText.setOrigin(statsBounds.width / 2.0f, statsBounds.height / 2.0f);
     statsText.setPosition(400.0f, 280.0f);
 
-    // Check main menu button
+  
     mainMenuButtonHovered = isMouseOverButton(mainMenuButton, window);
     updateButtonAppearance(mainMenuButton, mainMenuButtonText, mainMenuButtonHovered);
 
@@ -182,12 +181,12 @@ void Menu::Draw(sf::RenderWindow& window, MenuState gameState) {
 }
 
 void Menu::drawIntroMenu(sf::RenderWindow& window) {
-    // Draw semi-transparent overlay
+    
     sf::RectangleShape overlay(sf::Vector2f(800.0f, 600.0f));
     overlay.setFillColor(sf::Color(0, 0, 0, 180));
     window.draw(overlay);
 
-    // Draw menu elements
+   
     window.draw(titleText);
     window.draw(playButton);
     window.draw(playButtonText);
@@ -196,12 +195,12 @@ void Menu::drawIntroMenu(sf::RenderWindow& window) {
 }
 
 void Menu::drawGameOverMenu(sf::RenderWindow& window) {
-    // Draw semi-transparent overlay
+    
     sf::RectangleShape overlay(sf::Vector2f(800.0f, 600.0f));
     overlay.setFillColor(sf::Color(0, 0, 0, 200));
     window.draw(overlay);
 
-    // Draw menu elements
+  
     window.draw(gameOverText);
     window.draw(statsText);
     window.draw(mainMenuButton);

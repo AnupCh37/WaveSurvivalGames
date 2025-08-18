@@ -1,6 +1,6 @@
-#define _USE_MATH_DEFINES // IMPORTANT: Must be before #include <cmath>
+#define _USE_MATH_DEFINES 
 #include "Math.h"
-#include <cmath> // For std::sqrt, std::atan2
+#include <cmath> 
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -28,7 +28,7 @@ bool Math::DidRectCollision(const sf::FloatRect& rect1, const sf::FloatRect& rec
     return false;
 }
 
-// Function definition for GetRectCenter
+
 sf::Vector2f Math::GetRectCenter(const sf::FloatRect& rect)
 {
     return sf::Vector2f(rect.left + rect.width / 2.0f, rect.top + rect.height / 2.0f);

@@ -8,7 +8,7 @@ public:
     ~Pause();
 
     void Draw(sf::RenderWindow& window);
-    void Load(); // Load font and texture
+    void Load(); 
     void Update(float deltaTime, sf::RenderWindow& window);
 
     bool isPausedActive() const { return isPaused; }

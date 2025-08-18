@@ -1,4 +1,4 @@
-﻿#define _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
 #include "Player.h"
 #include "Math.h"
 #include <iostream>
@@ -6,7 +6,6 @@
 #include <cmath>
 #include "Enemy.h"
 
-// Global function getTileAtPosition
 int getTileAtPosition(const sf::Vector2f& pos, const std::vector<int>& level)
 {
     const int tilew = 16;
@@ -23,7 +22,7 @@ int getTileAtPosition(const sf::Vector2f& pos, const std::vector<int>& level)
 }
 
 Player::Player() :
-    idleTexture(), attackTexture(), walkTexture(), psprite(), // FIXED: Removed idleTexture from psprite initialization
+    idleTexture(), attackTexture(), walkTexture(), psprite(), 
     size({ 100, 100 }),
     boneSpeed(0.4f),
     boneFireRate(0.3f),
@@ -71,7 +70,7 @@ void Player::Load()
 {
     if (idleTexture.loadFromFile("assets/Player/Texture/idle.png"))
     {
-        psprite.setTexture(idleTexture); // FIXED: Added this line to set the texture!
+        psprite.setTexture(idleTexture); 
         psprite.setTextureRect({ 0, 0 , size.x, size.y });
         psprite.setScale(2.0f, 2.0f);
         boundingRectangle.setSize(sf::Vector2f(static_cast<float>(size.x) / 4.0f, static_cast<float>(size.y) / 4.0f));
@@ -188,22 +187,22 @@ void Player::Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWind
         float rotationAngleRad = std::atan2(direction.y, direction.x);
         newBone.setRotation(rotationAngleRad * 180.0f / static_cast<float>(M_PI));
 
-        // 🔹 Create bounding rectangle for the arrow
+      
         sf::RectangleShape boneRect(sf::Vector2f(newBone.getGlobalBounds().width / 2.25f, newBone.getGlobalBounds().height / 2.25f));
         boneRect.setFillColor(sf::Color::Transparent);
-        boneRect.setOutlineColor(sf::Color::Transparent); // Debug color
+        boneRect.setOutlineColor(sf::Color::Transparent); 
         boneRect.setOutlineThickness(1.0f);
         boneRect.setOrigin(boneRect.getSize() / 2.0f);
         boneRect.setPosition(newBone.getPosition());
 
         bones.push_back(newBone);
         boneDirections.push_back(direction);
-        boneBounds.push_back(boneRect); // NEW
+        boneBounds.push_back(boneRect);
 
         boneFireClock.restart();
     }
 
-    // 🔹 Arrow update loop with bounding rectangles
+    
     for (size_t i = 0; i < bones.size();) {
         sf::Vector2f movement = boneDirections[i] * boneSpeed * deltaTime;
         bones[i].move(movement);
@@ -256,7 +255,7 @@ void Player::Draw(float deltaTime, sf::RenderWindow& window)
     for (const auto& bone : bones) {
         window.draw(bone);
     }
-    // 🔹 Draw arrow bounding boxes (debug)
+  
     for (const auto& bound : boneBounds) {
         window.draw(bound);
     }

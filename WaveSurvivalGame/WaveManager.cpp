@@ -1,5 +1,5 @@
 #include "WaveManager.h"
-#include <SFML/System.hpp>  // Add this line
+#include <SFML/System.hpp>  
 #include <iostream>
 
 WaveManager::WaveManager(Sound* soundSys)
@@ -9,17 +9,17 @@ WaveManager::WaveManager(Sound* soundSys)
 
 void WaveManager::Update(std::vector<Enemy>& enemies)
 {
-    // If we're currently delaying, check if delay is finished
+    
     if (waveTimer.isActive()) {
         if (waveTimer.isFinished()) {
-            // Delay is over, spawn the next wave
+           
             spawnWave(enemies, currentWave);
             currentWave++;
         }
-        return; // Don't check for wave completion while delaying
+        return; 
     }
 
-    // Check if all enemies are dead
+   
     bool allDead = true;
     for (size_t i = 0; i < enemies.size(); i++) {
         if (enemies[i].getHealth() > 0) {
@@ -28,13 +28,13 @@ void WaveManager::Update(std::vector<Enemy>& enemies)
         }
     }
 
-    if (allDead && !enemies.empty()) { // Make sure we actually had enemies
-        // Start the delay
-        float delayTime = 3.0f; // 3 seconds
+    if (allDead && !enemies.empty()) { 
+        
+        float delayTime = 3.0f; 
         waveTimer.start(delayTime);
     }
     else if (enemies.empty() && currentWave == 1) {
-        // Special case for the very first wave
+       
         spawnWave(enemies, currentWave);
         currentWave++;
     }

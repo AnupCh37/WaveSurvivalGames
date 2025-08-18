@@ -10,7 +10,7 @@ Enemy::Enemy(float sp)
     frameTime(0.15f), totalFrames(6), wasMoving(false), soundSystem(nullptr)
 {
     boundingRectangle.setFillColor(sf::Color::Transparent);
-    boundingRectangle.setOutlineColor(sf::Color::Red);
+    boundingRectangle.setOutlineColor(sf::Color::Transparent);
     boundingRectangle.setOutlineThickness(1.0f);
     boundingRectangle.setSize(sf::Vector2f(size.x / 4.0f, size.y / 4.0f));
 

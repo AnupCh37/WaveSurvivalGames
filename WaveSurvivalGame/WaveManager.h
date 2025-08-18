@@ -47,6 +47,7 @@ public:
     WaveManager(Sound* soundSys);
     void Update(std::vector<Enemy>& enemies);
     float getPlayerSpeed();
+    float getPlayerDamage();
     void spawnWave(std::vector<Enemy>& enemies, int waveNum);
     bool isWaveLoading() const;
     float getTimeRemaining() const;

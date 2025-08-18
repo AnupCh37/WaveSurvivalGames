@@ -10,7 +10,7 @@ void Music::play(bool loop)
     backgroundMusic.setLoop(loop);
     backgroundMusic.play();
     backgroundMusic.setPitch(2.0f);
-    backgroundMusic.setVolume(20.0f);
+    backgroundMusic.setVolume(10.0f);
 }
 
 void Music::stop()

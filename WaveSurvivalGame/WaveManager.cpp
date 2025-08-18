@@ -46,6 +46,11 @@ float WaveManager::getPlayerSpeed()
     return speed;
 }
 
+float WaveManager::getPlayerDamage()
+{
+    float damage = 10.0f + (currentWave - 1) * 1;
+    return damage;
+}
 void WaveManager::spawnWave(std::vector<Enemy>& enemies, int waveNum)
 {
     enemies.clear();
@@ -62,8 +67,9 @@ void WaveManager::spawnWave(std::vector<Enemy>& enemies, int waveNum)
             e2.soundSystem = soundSystem;
             enemies.push_back(e2);
         }
+
     }
-    else if (waveNum == 2) {
+    else if (waveNum == 6) {
         Enemy e1(0.12f);
         if (e1.Load({ 300.0f, 300.0f })) {
             e1.soundSystem = soundSystem;
@@ -106,6 +112,28 @@ void WaveManager::spawnWave(std::vector<Enemy>& enemies, int waveNum)
                 enemies.push_back(e);
             }
         }
+    }
+    else if (waveNum == 2)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            Enemy e(0.1f + i * 0.015f);
+            if (e.Load({ 100.0f,100.0f }))
+            {
+                e.soundSystem = soundSystem;
+                enemies.push_back(e);
+            }
+        }
+        for (int i = 0; i < 8; i++)
+        {
+            Enemy e(0.1f + i * 0.015f);
+            if (e.Load({ 400.0f,400.0f }))
+            {
+                e.soundSystem = soundSystem;
+                enemies.push_back(e);
+            }
+        }
+
     }
     else {
         std::cout << "No more waves defined!" << std::endl;

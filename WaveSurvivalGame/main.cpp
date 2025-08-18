@@ -160,7 +160,7 @@ int main()
     if (backgroundData.empty())
         backgroundData = loadCSVFile("levels/l1.csv");
 
-    
+
     if (music.load("Assets/GameMusic/gameloop.ogg"))
         music.play(true);
     else
@@ -186,7 +186,7 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
 
-          
+
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
                 if (gameState == MenuState::PLAYING) {
                     paused = !paused;
@@ -207,7 +207,7 @@ int main()
         sf::Time deltaTimeTimer = clock.restart();
         float deltaTime = deltaTimeTimer.asMicroseconds() / 1000.0f;
 
-        
+
         switch (gameState) {
         case MenuState::INTRO_MENU:
         case MenuState::GAME_OVER:
@@ -217,25 +217,25 @@ int main()
             if (gameState == MenuState::PLAYING) {
                 resetGame(player, waveManager, enemies, &soundEffects, gameTimer);
 
-               
-                player.Load(); 
+
+                player.Load();
 
                 enemiesKilledCount = 0;
 
-                
+
                 static int totalEnemiesSpawned = 0;
                 static int currentWaveEnemies = 0;
-                totalEnemiesSpawned = enemies.size(); 
+                totalEnemiesSpawned = enemies.size();
                 currentWaveEnemies = 1;
             }
             break;
 
         case MenuState::PLAYING:
             if (!paused) {
-              
+
                 waveManager.Update(enemies);
 
-               
+
                 static int totalEnemiesSpawned = 0;
                 static int currentWaveEnemies = 0;
 
@@ -244,7 +244,7 @@ int main()
                     currentWaveEnemies = waveManager.getCurrentWave();
                 }
 
-              
+
                 int aliveEnemies = 0;
                 for (const auto& enemy : enemies) {
                     if (enemy.getHealth() > 0) {
@@ -252,18 +252,18 @@ int main()
                     }
                 }
 
-             
+
                 enemiesKilledCount = totalEnemiesSpawned - aliveEnemies;
 
-              
+
                 for (auto& enemy : enemies) {
                     enemy.Update(deltaTime, player.psprite.getPosition(), player, backgroundData);
                 }
 
-                player.Update(deltaTime, enemies, window, backgroundData, waveManager.getPlayerSpeed());
+                player.Update(deltaTime, enemies, window, backgroundData, waveManager.getPlayerSpeed(),waveManager.getPlayerDamage());
                 framRate.Update(deltaTime);
 
-             
+
                 if (player.getHealth() <= 0) {
                     gameState = MenuState::GAME_OVER;
                     int survivalTime = static_cast<int>(gameTimer.getElapsedTime().asSeconds());
@@ -278,15 +278,15 @@ int main()
             break;
         }
 
-  
+
         window.setView(view);
         window.clear();
 
-      
+
         if (gameState == MenuState::PLAYING || gameState == MenuState::PAUSED) {
             window.draw(backgroundLayer);
 
-      
+
             for (size_t i = 0; i < enemies.size(); i++) {
                 enemies[i].Draw(window);
             }
@@ -305,7 +305,7 @@ int main()
 
                 waveText.setString(waveMessage);
 
-           
+
                 sf::FloatRect textBounds = waveText.getLocalBounds();
                 waveText.setPosition(
                     (800 - textBounds.width) / 2.0f,
@@ -318,7 +318,7 @@ int main()
                     waveText.getPosition().y - 10
                 );
 
-                
+
                 window.draw(textBackground);
                 window.draw(waveText);
             }
@@ -332,7 +332,7 @@ int main()
         }
 
         if (gameState == MenuState::INTRO_MENU || gameState == MenuState::GAME_OVER) {
-         
+
             if (gameState == MenuState::GAME_OVER) {
                 window.draw(backgroundLayer);
                 for (size_t i = 0; i < enemies.size(); i++) {

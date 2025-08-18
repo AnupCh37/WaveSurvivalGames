@@ -36,7 +36,7 @@ Player::Player() :
     wasMoving(false)
 {
     boundingRectangle.setFillColor(sf::Color::Transparent);
-    boundingRectangle.setOutlineColor(sf::Color::Blue);
+    boundingRectangle.setOutlineColor(sf::Color::Transparent);
     boundingRectangle.setOutlineThickness(1.0f);
     boundingRectangle.setSize(sf::Vector2f(32.0f, 32.0f));
     psprite.setOrigin(size.x / 2.0f, size.y / 2.0f);
@@ -96,7 +96,7 @@ void Player::Load()
     }
 }
 
-void Player::Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWindow& window, const std::vector<int>& tiles, float speed)
+void Player::Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWindow& window, const std::vector<int>& tiles, float speed,float damage)
 {
     sf::Vector2f velocity(0.0f, 0.0f);
     float baseSpeed = speed;
@@ -221,7 +221,7 @@ void Player::Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWind
         if (!hit) {
             for (auto& enemy : enemies) {
                 if (enemy.getHealth() > 0 && Math::DidRectCollision(arrowBounds, enemy.boundingRectangle.getGlobalBounds())) {
-                    enemy.ChangeHealth(-10);
+                    enemy.ChangeHealth(-damage);
                     std::cout << "Enemy hit! Current Enemy Health: " << enemy.getHealth() << std::endl;
                     bones.erase(bones.begin() + i);
                     boneDirections.erase(boneDirections.begin() + i);

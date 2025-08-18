@@ -15,7 +15,7 @@ public:
     ~Player();
 
     void Load();
-    void Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWindow& window, const std::vector<int>& tiles, float speed);
+    void Update(float deltaTime, std::vector<Enemy>& enemies, sf::RenderWindow& window, const std::vector<int>& tiles, float speed,float damage);
     void Draw(float deltaTime, sf::RenderWindow& window);
     void ChangeHealth(int hp);
 

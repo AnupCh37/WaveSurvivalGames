@@ -35,7 +35,7 @@ A 2D top-down survival game built with C++ and SFML where you fight waves of ene
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/WaveSurvivalGame.git
+git clone https://github.com/AnupCh37/WaveSurvivalGame.git
 cd WaveSurvivalGame
 ```
 

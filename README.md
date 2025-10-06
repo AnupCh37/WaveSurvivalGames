@@ -1,6 +1,6 @@
 # Wave Survival Game
 
-A 2D top-down survival game built with C++ and SFML where you fight waves of enemies in a prison environment.
+A 2D top-down survival game built with C++ and SFML where you fight waves of enemies in a prison like environment.
 
 ## 🎮 Game Features
 
